@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'photoscan_outputs/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "rb_photoscan_outputs"
+  spec.name          = "photoscan_outputs"
   spec.version       = PhotoscanOutputs::VERSION
   spec.authors       = ["Aaron Marburg"]
   spec.email         = ["amarburg@notetofutureself.org"]
