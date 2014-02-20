@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require "trollop"
+require "ox"
+require "pathname"
+
+require "photoscan_outputs"
+include PhotoscanOutputs
+
+opts = Trollop.options do
+  opt :camera_file, "Location of camera file.", :default => Pathname.new(__FILE__).parent.join("cameras.xml").to_s
+end
+
+Trollop::die "Can't find camera file #{opts[:camera_file]}" unless File.readable? opts[:camera_file]
+
+cameras = CameraFile.load( opts[:camera_file] )
+
+unless ARGV.length > 0
+  puts "Specify name(s) of cameras to show on the command line.  Since you haven't specified a camera, I'll show you \"IMG_7625.jpg\""
+  ARGV.push "IMG_7625.jpg"
+end
+
+ARGV.each { |camera_name|
+
+  cam = cameras.find_by_name camera_name
+
+  unless cam
+    puts "Couldn't find a camera named \"#{camera_name}\"" 
+    next
+  end
+  
+  cam.dump
+}

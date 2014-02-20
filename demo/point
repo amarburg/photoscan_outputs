@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+#
+#
+
+require "trollop"
+require "ox"
+require "photoscan_outputs"
+include PhotoscanOutputs
+
+
+opts = Trollop.options do
+  opt :camera_file, "Location of camera file.", :default => Pathname.new(__FILE__).parent.join("cameras.xml").to_s
+end
+
+class Matrix
+  def print( opts = {} )
+    puts opts[:caption] if opts[:caption]
+    to_a.each { |row|
+      puts row.map { |x| "%12.4f" % x }.join(' ')
+    }
+  end
+end
+
+class Vector
+  def print( opts = {} )
+    puts opts[:caption] if opts[:caption]
+    puts to_a.map { |x| "%12.4f" % x }.join(' ')
+  end
+end
+
+
+raise "Can't find #{opts[:camera_file]}" unless File.readable? opts[:camera_file]
+
+cameras = CameraFile.load( opts[:camera_file] )
+
+name = "IMG_7622.jpg"
+cam = cameras.find_by_name( name )
+Trollop::die "Can't find image #{name}" unless cam
+
+puts "Camera projection matrix is"
+cam.calibration.k.print
+
+puts "Total transform from camera to world origin is"
+cam.transform.dump
+
+# From the model used to generate cameras.xml, I know the ground control point "P1"
+# appears in IMG_7622.jpg at "img_pt"
+p1 = Vector[ 666813.226289, 5445609.922365, 0.782823, 1 ]
+img_pt = Vector[299.3, 306.8, 1]
+
+puts
+p1.print(caption: "The control point at")
+img_pt.print(caption: "appears  in the image at:")
+
+puts "Transform from world to body is then:"
+world_to_body = cam.transform.inv
+world_to_body.dump
+
+p1_b = world_to_body * p1
+p1_b.print(caption: "The control point in the body frame is")
+
+# Convert to inhomogeneous quantity
+p1_b_inhom = Vector.elements( p1_b.to_a.first(3) )
+p1_img = cam.calibration.k * p1_b_inhom
+p1_img = p1_img.map { |x| x / p1_img[2] }
+
+p1_img.print(caption: "It appears at the image at:")
+
+
+
