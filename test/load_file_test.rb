@@ -2,13 +2,12 @@
 require "minitest/autorun"
 require "photoscan_outputs"
 
+require_relative "common"
+
 class TestCameraFile < MiniTest::Unit::TestCase
 
   include PhotoscanOutputs
-
-  def demo_cameras_xml
-    Pathname.new(__FILE__).parent.parent.join("demo", "cameras.xml")
-  end
+  include PhotoscanOutputsTestCommon
 
   def test_loads_a_file
     cameras = CameraFile.load( demo_cameras_xml )

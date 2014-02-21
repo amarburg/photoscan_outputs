@@ -15,7 +15,7 @@ module PhotoscanOutputs
     end
 
     def find_by_name( name )
-      find { |cam| cam.name ==  name }
+      find { |cam| cam.name.match  name }
     end
 
     def each
