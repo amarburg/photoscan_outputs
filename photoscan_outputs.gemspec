@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = PhotoscanOutputs::VERSION
   spec.authors       = ["Aaron Marburg"]
   spec.email         = ["amarburg@notetofutureself.org"]
-  spec.summary       = %q{A Ruby Gem to parse the Photoscan export file formats.}
+  spec.summary       = %q{A Ruby Gem to parse export file formats from Photoscan.}
   spec.homepage      = "http://github.com/amarburg/rb_photoscan_outputs"
   spec.license       = "MIT"
 
