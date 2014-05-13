@@ -60,8 +60,8 @@ module PhotoscanOutputs
   #
   # Or
   #
-  # R  T
-  # 0  1
+  # sR  T
+  # 0   1
   #
   class Transform
     attr_reader :mat
@@ -75,8 +75,17 @@ module PhotoscanOutputs
              end
     end
 
-    def r_mat
+    def sr_mat
      Matrix.rows mat.to_a.first(3).map { |row| row.first(3) } 
+    end
+
+    def scale
+      sr_mat.row_vectors.first.norm
+    end
+
+    def r_mat
+      sc = scale
+      sr_mat.map { |x| x/sc }
     end
 
     def t_mat
@@ -94,7 +103,6 @@ module PhotoscanOutputs
     def *(b)
       mat * b
     end
-
    
     def dump( io = STDOUT )
       print_mat( mat, io )
